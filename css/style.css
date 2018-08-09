@@ -1,0 +1,233 @@
+* { padding:0; margin:0; box-sizing: border-box; }
+
+h1 { font-size: 2.3em;}
+h2 { font-size: 2em; margin-top: 0; }
+h3 { font-size: 1.67em; margin-top: 0; color: gold; }
+h4 { font-size: 1em; }
+
+p { margin: 10px 0; }
+a { color: white; }
+a:hover { color: gold; }
+
+ul { list-style: none; display: inline-block; }
+
+th { text-align: left; padding: 2px; }
+
+body { background-color: #111; color: white; overflow-y: scroll; font-family: sans-serif, verdana; }
+
+header { background-color: darkorange; color: #005500; font-size: 13px; padding: 7px; }
+header h1 { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+header .nav { margin-top: 5px; }
+header .nav li { margin: 0 4px; }
+
+footer { background-color: #005500; color: white; font-size: 13px; padding: 7px; /*#3B3272*/}
+
+form { display: inline; }
+
+button { cursor: pointer; }
+
+#page { background-color: black; margin: 0 auto; max-width: 1000px; padding: 3px; position: relative; }
+#alerts { margin: 3px 0; }
+#content { min-height: 600px; }
+
+.SumoSelect { color: #222; font-size: 13px; width: 275px; }
+
+.inline { display: inline; }
+
+.center { text-align: center; }
+.right { text-align: right; }
+.left { text-align: left; }
+
+.pull-left { float: left; }
+.pull-right { float: right; }
+
+.nowrap { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+
+.row {
+	position: relative;
+
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+ }
+
+.col1 { -webkit-flex: 1; flex: 1; margin-bottom: 3px; }
+.col2 { -webkit-flex: 2; flex: 2; margin-bottom: 3px; }
+
+.hc1 { -webkit-flex: 1; flex: 1; }
+.hc2 { -webkit-flex: 2;	flex: 2; }
+.hc3 { -webkit-flex: 3;	flex: 3; }
+
+.list { border-collapse: collapse; font-size: 13px; width: 100%; }
+.list td { padding: 3px 4px; }
+.striped>:nth-child(odd) { background-color: #222; }
+
+.form { font-size: 13px; }
+.form td {}
+.form label { display: inline-block; padding: 0px 4px; width: 110px; }
+.form input { padding: 7px; display: inline-block; width: 100%; }
+
+.navbar { font-size: 14px; }
+.navbar-primary {
+	background-color: #112A2A; color: gold; font-size: 13px; padding: 1px 3px 2px;
+	border-top: 1px solid slategrey;  border-bottom: 1px solid darkslategrey;
+}
+.navbar-primary a { color: orange; }
+.navbar-primary a:hover { color: gold; }
+
+.nav { display: inline-block; }
+.nav li { cursor: pointer; display: inline; vertical-align: middle; }
+
+.w25  { width: 25%; }
+.w30  { width: 30%; }
+.w40  { width: 40%; }
+.w50  { width: 50%; }
+.w60  { width: 60%; }
+.w100 { width: 100%; }
+
+.max50  { max-width: 50px;  }
+.max120 { max-width: 120px; }
+.max150 { max-width: 150px; }
+.max275 { max-width: 275px; }
+.max500 { max-width: 500px; }
+
+.min200 { min-width: 200px; }
+.min275 { min-width: 275px; }
+.min300 { min-width: 300px; }
+.min330 { min-width: 330px; }
+.min350 { min-width: 350px; }
+.min410 { min-width: 410px; }
+.min550 { min-width: 550px; }
+
+.minPgW { min-width: 460px; }
+
+.pad-top { padding-top: 4px; }
+.pad-sides { padding-left: 4px; padding-right: 4px; }
+.padded { padding: 7px; }
+
+.user-icon { background: url('../img/icon_user_white.png') center no-repeat; width: 9px; height: 11px; display:inline-block; }
+.doc-icon { background: url('../img/icon_report.png') no-repeat; width: 16px; height: 16px; display: inline-block; vertical-align: top; }
+
+.sort { display: inline-block; vertical-align: top; padding-right: 13px; }
+.asc { background: url('../img/icon_sort_asc.png') no-repeat center right; color: goldenrod; }
+.desc { background: url('../img/icon_sort_desc.png') no-repeat center right; color: goldenrod; }
+
+.framed { border: 1px solid; }
+.transparent { background-color: transparent; }
+
+.btn { border: 1px solid grey; padding: 3px 7px; text-decoration: none; cursor: pointer;  margin: 0; }
+.btn:hover { border-color: whitesmoke; }
+
+.btn-primary { background-color: blue; color: whitesmoke; }
+.btn-primary:hover { color: lime; }
+
+.btn-logout { background-color: transparent; }
+.btn-logout:hover { color: whitesmoke; }
+
+.btn-action {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f1e767+0,feb645+100;Yellow+3D */
+	background: #f1e767; /* Old browsers */
+	background: -moz-linear-gradient(top, #f1e767 0%, #feb645 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #f1e767 0%,#feb645 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #f1e767 0%,#feb645 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1e767', endColorstr='#feb645',GradientType=0 ); /* IE6-9 */
+	color: #004400;
+	border-radius: 4px;
+}
+.btn-action:hover { color: #008800; }
+.btn-action span { vertical-align: top; line-height: 14px; }
+
+.alert { border: 1px solid silver; margin: 0; padding: 3px; display: block; } /* left: 3px; position: absolute; right: 3px;  z-index: 10; */
+.flash { border: 1px solid silver; left: 3px; margin: 0; padding: 3px; position: absolute; right: 3px;  z-index: 10; }
+.success { background-color: lime; border-color: green; }
+.warning { background-color: orangered; border-color: brown; }
+.danger { background-color: red; border-color: firebrick; color: white; }
+
+.back { color: gold; }
+.action { color: lime; }
+
+.red { color: red; border-color: firebrick; }
+.red:hover { color: #FF8888; border-color: #FF3333; }
+.green { color: lime; }
+
+.light { color: #aaa; border-color: #aaa; }
+.light:hover { color: white; border-color: white; }
+
+.close-x { background: none; border:none; cursor: pointer; float: right; }
+
+.popup-backdrop { bottom: 0; left: 0; position: fixed; right: 0; top: 0; z-index: 999; }
+.popup-window { background-color: midnightblue; border: 5px solid white; margin: 15px auto; padding: 15px; position: relative; }
+.popup-window p { display: block; max-height: 445px; overflow-y: auto; overflow-x: hidden; }
+.popup-buttons { text-align: center; margin-top: 20px; }
+
+.pager a { cursor: pointer; display: inline-block; margin: 0 3px; text-decoration: none; }
+.pager b { font-size: 16px; }
+
+.pager .disabled { cursor: default; }
+
+.pager .icon { background: no-repeat center center transparent; height: 18px; width: 18px; }
+
+.pager .pageno { border: 1px solid darkgoldenrod; color: goldenrod; padding: 1px 4px; }
+.pager .pageno:hover { border-color: silver; color: white; }
+
+.pager .first { background-image: url("../img/icon_first.png"); }
+.pager .first:hover { background-image: url("../img/icon_first_hover.png"); }
+.pager .first.disabled { background-image: url("../img/icon_first_disabled.png"); }
+
+.pager .prev { background-image: url("../img/icon_prev.png"); }
+.pager .prev:hover { background-image: url("../img/icon_prev_hover.png"); }
+.pager .prev.disabled { background-image: url("../img/icon_prev_disabled.png"); }
+
+.pager .next { background-image: url("../img/icon_next.png"); }
+.pager .next:hover { background-image: url("../img/icon_next_hover.png"); }
+.pager .next.disabled { background-image: url("../img/icon_next_disabled.png"); }
+
+.pager .last { background-image: url("../img/icon_last.png"); }
+.pager .last:hover { background-image: url("../img/icon_last_hover.png"); }
+.pager .last.disabled { background-image: url("../img/icon_last_disabled.png"); }
+
+.debug-status { font-size: 13px; padding: 15px 40px; }
+
+/* .sms-info:nth-child(even) { background-color: whitesmoke; } */
+
+.clearfix {
+  overflow: auto;
+  zoom: 1;
+}
+
+@media (max-width: 680px) {
+  .hc1, .hc2, hc3 { flex: 1 100%; text-align: left; }
+  .hide-sm { display: none; }
+}
+
+@media (max-width: 580px) {
+  .col1, .col2 { flex: 1 100%;  text-align: left; }
+}
+
+/* Mobile first queries */
+
+/* Larger than mobile
+@media (min-width: 400px) {}
+*/
+
+/* Larger than phablet
+@media (min-width: 550px) {}
+*/
+
+/* Larger than tablet
+@media (min-width: 750px) {}
+*/
+
+/* Larger than desktop
+@media (min-width: 960px) {}
+*/
+
+/* Larger than Desktop HD
+@media (min-width: 1200px) {}
+*/
+
+
