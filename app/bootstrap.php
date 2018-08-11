@@ -52,8 +52,8 @@ include __ONEFILE__ . '/Functions.php';
 
 // ALIAS SOME NAMESPACED CLASSES FOR CONVENIENCE
 
-class_alias('\OneFile\Facade', 'Facade');
-class_alias('\OneFile\Format', 'Fmt');
+class_alias('\OneFile\Facade'  , 'Facade');
+class_alias('\OneFile\Format'  , 'Fmt');
 class_alias('\OneFile\Sanitize', 'Sanitize');
 
 

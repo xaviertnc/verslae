@@ -50,7 +50,7 @@ Class RegistrasieModel
 	public static function csvGetPageData($limit)
 	{
 		//Log::debug('RegistrasieModel::csvGetPageData(), limit = ' . $limit);
-		return RegistrasiesRepo::kryRegistrasies(self::$ekspo_id, $limit, self::$orderby);
+		return RegistrasiesRepo::lysRegistrasies(self::$ekspo_id, $limit, self::$orderby);
 	}
 
 

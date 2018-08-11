@@ -1,4 +1,4 @@
-<?php // verslae/solidariteit/show.php - SOLIDARITEIT VERSLAG
+<?php // verslae/borgverslag/show.php - SOLIDARITEIT VERSLAG
 
 include '../app/bootstrap.php';
 
@@ -6,14 +6,14 @@ include __MODELS__  . '/ekspo.model.php';
 include __MODELS__  . '/ekspos.repo.php';
 include __MODELS__  . '/column.entity.php';
 include __MODELS__  . '/registrasies.repo.php';
-include __MODELS__  . '/solidariteit.model.php';
+include __MODELS__  . '/borgverslag.model.php';
 include __MODELS__  . '/csv-aflaai.domain.php';
 
+Ui::init(['base-url' => 'borgverslag/', 'itemspp' => 17]);
 
-Ui::init(['base-url' => 'solidariteit/', 'itemspp' => 17]);
 
+$gebruiker = Auth::check('borg');
 
-$gebruiker = Auth::check('solidariteit');
 
 $keepParams = ['p', 'ipp', 'ekspo', 'dlg', 'sort', 'dir'];
 $removeParams = [];
@@ -48,19 +48,21 @@ switch (Request::$method)
 		$pageno = Request::get('p', 1);
 		$itemspp = Request::get('ipp', Ui::$itemspp);
 		$ekspo_id = Request::get('ekspo', __HUIDIGE_EKSPO_ID__);
-		$opsomming = RegistrasiesRepo::krySolidariteitOpsomming($ekspo_id);
-		$totaal_solidariteit = $opsomming->solidariteitlede + $opsomming->nie_lede_kontak;
+    
+		$opsomming = RegistrasiesRepo::kryRegistrasiesOpsomming($ekspo_id);
 
+		$totaal_borgverslag = $opsomming->reedsborglid + $opsomming->nie_lede_kontak;
+    
 		Ui::handle_popups(Request::get('dlg'), $keepParams);
-		Ui::$pager_widget->config(Ui::$base_url, $totaal_solidariteit, $itemspp, $pageno, $keepParams);
+		Ui::$pager_widget->config(Ui::$base_url, $totaal_borgverslag, $itemspp, $pageno, $keepParams);
 		Ui::$sort_widget->config(Ui::$base_url, 'desc', $keepParams);
-
-		$registrasies = RegistrasiesRepo::krySolidariteitRegistrasies($ekspo_id, Ui::$pager_widget->limit(), Ui::$sort_widget->orderby());
+        
+		$registrasies = RegistrasiesRepo::lysBorgRegistrasies($ekspo_id, Ui::$pager_widget->limit(), Ui::$sort_widget->orderby());
 		$ekspos = EksposRepo::kryEkspos();
 
 		$geselekteerde_ekspo = EkspoModel::kiesEeen($ekspos, $ekspo_id);
 
-		$opskrif = $geselekteerde_ekspo ? $geselekteerde_ekspo->naam : 'Solidariteit KragDag';
+		$opskrif = $geselekteerde_ekspo ? $geselekteerde_ekspo->naam : 'KragDag Borg';
 
 		Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ekspoSel.change(function(){$("#filters-form").submit();return false;});'); // Moet WIDGET word...
 
@@ -70,7 +72,6 @@ switch (Request::$method)
 	default:
 		Errors::raise('Invalid Request');
 }
-
 
 // SOLIDARITEIT VERSLAG - HTML VIEW ?>
 <?php include __SNIPPETS__.'/html.head.snippet.php'; ?>
@@ -92,7 +93,7 @@ switch (Request::$method)
 			<ul class="nav">
 				<li>
 					<form method="post">
-						<button class="btn btn-action" name="csv" type="submit" value="solidariteit">
+						<button class="btn btn-action" name="csv" type="submit" value="borgverslag">
 							<i class="doc-icon"></i><span>&nbsp; Laai af as CSV</span>
 						</button>
 					</form>
@@ -113,14 +114,14 @@ switch (Request::$method)
 			<div class="col1">
 				<ul class="framed padded min275">
 					<li>Alle Registrasies: <?=$opsomming->totaal?></li>
-					<li>Totaal Solidariteit Verwant: <?=$totaal_solidariteit?:0?></li>
+					<li>Totaal Borg Verwant: <?=$totaal_borgverslag?:0?></li>
 				</ul>
 			</div>
 			<div class="col1 right">
 				<ul class="framed padded min275">
 					<li>Kontakbare nie-lede: <?=$opsomming->nie_lede_kontak?:0?></li>
-					<li>Solidariteit kan my kontak: <?=$opsomming->solidariteitkontak?:0?></li>
-					<li>Bestaande Solidariteit lede: <?=$opsomming->solidariteitlede?:0?></li>
+					<li>Borg kan my kontak: <?=$opsomming->borgkanmykontak?:0?></li>
+					<li>Bestaande Borg lede: <?=$opsomming->reedsborglid?:0?></li>
 				</ul>
 			</div>
 		</div>
@@ -144,8 +145,8 @@ switch (Request::$method)
 					<th class="hide-sm" style="width:180px"><?=Ui::$sort_widget->renderLink('Besoeker', 'volleNaam')?></th>
 					<th style="width:100px">Selfoon</th>
 					<th style="width:280px"><?=Ui::$sort_widget->renderLink('Epos', 'epos')?></th>
-					<th class="center" style="width:50px"><?=Ui::$sort_widget->renderLink('Kontak', 'solidariteitkontak')?></th>
-					<th class="center" style="width:50px"><?=Ui::$sort_widget->renderLink('Lid', 'solidariteitlid')?></th>
+					<th class="center" style="width:50px"><?=Ui::$sort_widget->renderLink('Kontak', 'borgkanmykontak')?></th>
+					<th class="center" style="width:50px"><?=Ui::$sort_widget->renderLink('Lid', 'reedsborglid')?></th>
 				</tr>
 			</thead>
 			<tbody class="striped"><?php
@@ -156,8 +157,8 @@ switch (Request::$method)
 					<td class="hide-sm nowrap max120" title="<?=$item->volleNaam?>"><?=$item->volleNaam?></td>
 					<td class="nowrap max50" title="<?=$item->selfoon?:$item->telefoon?>"><?=$item->selfoon?:$item->telefoon?></td>
 					<td class="nowrap max150" title="<?=$item->epos?>"><?=$item->epos?:'-'?></td>
-					<td class="center"><?=$item->solidariteitkontak?'<span class="green">Ja</span>':'<span class="red">Nee</span>'?></td>
-					<td class="center"><?=$item->solidariteitlid?'<span class="red">Ja</span>':'<span class="green">Nee</span>'?></td>
+					<td class="center"><?=$item->borgkanmykontak?'<span class="green">Ja</span>':'<span class="red">Nee</span>'?></td>
+					<td class="center"><?=$item->reedsborglid?'<span class="red">Ja</span>':'<span class="green">Nee</span>'?></td>
 				</tr><?php
 				echo PHP_EOL; endforeach; ?>
 			</tbody>

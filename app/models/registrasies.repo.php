@@ -15,7 +15,7 @@
 class RegistrasiesRepo
 {
 
-	public static function kryRegistrasies($ekspo_id, $limit = null, $orderby = null)
+	public static function lysRegistrasies($ekspo_id, $limit = null, $orderby = null)
 	{
 		$sql = 'view_registrasies WHERE ekspo_id=?';
 		if ($orderby) $sql .= ' ORDER BY ' . $orderby;
@@ -33,13 +33,13 @@ class RegistrasiesRepo
 
 	public static function kryAantalBorgRegistrasies($ekspo_id)
 	{
-		return DB::count('tblregistrasies', 'WHERE `ekspo_id`=? AND (NOT reedsborglid OR borgkanmykontak=1)', [$ekspo_id]);
+		return DB::count('tblregistrasies', 'WHERE `ekspo_id`=? AND (reedsborglid=1 OR borgkanmykontak=1)', [$ekspo_id]);
 	}
   
 
 	public static function lysBorgRegistrasies($ekspo_id, $limit = null, $orderby = null)
 	{
-		$sql = 'view_registrasies WHERE ekspo_id=? AND (NOT reedsborglid OR borgkanmykontak=1)';
+		$sql = 'view_registrasies WHERE ekspo_id=? AND (reedsborglid=1 OR borgkanmykontak=1)';
 		if ($orderby) $sql .= ' ORDER BY ' . $orderby;
 		if ($limit) $sql .= ' LIMIT ' . $limit;
 		$registrasies = DB::select($sql, [$ekspo_id]);
@@ -63,7 +63,7 @@ class RegistrasiesRepo
    * @field Integer verwysings       Aantal registrasie-verwysings vir die spesifieke ekspo
    *
    */   
-	public static function kryBorgOpsomming($ekspo_id)
+	public static function kryRegistrasiesOpsomming($ekspo_id)
 	{
 		$registrasiesopsomming = DB::first('view_registrasiesopsomming', 'WHERE ekspo_id=?', [$ekspo_id]);
 		return $registrasiesopsomming;

@@ -88,6 +88,7 @@ switch (Request::$method)
 		$volwassenes_weer_opgedaag = [];
 
 		$registrasies_vooraf_totaal = 0;
+		$volwassenes_hek_totaal = 0;
 		$volwassenes_vooraf_totaal = 0;
     $gratis_deurlaat_totaal = 0;
     
@@ -147,6 +148,7 @@ switch (Request::$method)
 			if ($opdaging->registrasietipe_id >= 7) {
 				$kinders_hek[$ekspo_dag] += $opdaging->kinders;
 				$volwassenes_hek[$ekspo_dag] += $opdaging->volwassenes;
+        $volwassenes_hek_totaal += $opdaging->volwassenes;
 				$registrasies_hek[$ekspo_dag]++;
 			}
       
@@ -275,7 +277,7 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 							<td>&nbsp;</td>
 							<td><i>Toegangsfooi Betaal</i></td>
 							<td>&nbsp;</td>
-							<td><i><?=$opgedaag->{'volwassenes_dag'.$ekspo_dag} - array_get($volwassenes_hek_gratis, $ekspo_dag, 0)?></i></td>
+							<td><i><?=array_get($volwassenes_hek, $ekspo_dag, 0) - array_get($volwassenes_hek_gratis, $ekspo_dag, 0)?></i></td>
 							<td>&nbsp;</td>
 						</tr>               
 						<tr>
@@ -307,14 +309,14 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 							<td>&nbsp;</td>
 							<td>Ongeregistreerde Besoekers:</td>
 							<td>&nbsp;</td>
-							<td><?=$registrasietipes->hek?></td>
+							<td><?=$volwassenes_hek_totaal?></td>
 							<td>&nbsp;</td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
 							<td>Geregistreerde Besoekers</td>
 							<td>&nbsp;</td>
-							<td><?=$voorafregistrasies_opgedaag?></td>
+							<td><?=$volwassenes_vooraf_totaal?></td>
 							<td>&nbsp;</td>
 						</tr>
 						<tr class="subtotals">
@@ -367,10 +369,10 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 				</ul>
 				<br>
 				<ul class="sidemenu framed">
-					<li><a class="btn btn-primary" href="tuisskool/gebruikers/">Gebruikers</a></li>
-					<li><a class="btn btn-primary" href="tuisskool/geskiedenis/">Geskiedenis</a></li>
-					<li><a class="btn btn-primary" href="tuisskool/verwysings/?ekspo=<?=$ekspo_id?>">Verwysings</a></li>
-					<li><a class="btn btn-primary" href="tuisskool/daggrafiek/?ekspo=<?=$ekspo_id?>">Besoekers / Uur</a></li>
+					<li><a class="btn btn-primary" href="kragdag/gebruikers/">Gebruikers</a></li>
+					<li><a class="btn btn-primary" href="kragdag/geskiedenis/">Geskiedenis</a></li>
+					<li><a class="btn btn-primary" href="kragdag/verwysings/?ekspo=<?=$ekspo_id?>">Verwysings</a></li>
+					<li><a class="btn btn-primary" href="kragdag/daggrafiek/?ekspo=<?=$ekspo_id?>">Besoekers / Uur</a></li>
 				</ul>
 			</div>
 		</div>

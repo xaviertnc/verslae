@@ -2,12 +2,15 @@
 
 /*
  *
- * SOLIDARITEIT MODEL
+ * BORGVERSLAG MODEL
  * By: C. Moller - 06 May 2016
+ *
+ * Updated: 11 Aug 2018
+ *  - Nuwe naam
  *
  */
 
-class SolidariteitModel
+class BorgverslagModel
 {
 	public static $itemspp;
 	public static $itemcount;
@@ -22,18 +25,18 @@ class SolidariteitModel
 	{
 		self::$itemspp = $itemspp;
 		self::$ekspo_id = Request::get('ekspo', __HUIDIGE_EKSPO_ID__);
-		self::$itemcount = RegistrasiesRepo::kryTotaalSolidariteit(self::$ekspo_id);
+		self::$itemcount = RegistrasiesRepo::kryAantalBorgRegistrasies(self::$ekspo_id);
 		self::$tailcount = self::$itemcount % $itemspp;
 		self::$pagecount = floor(self::$itemcount / $itemspp);
 		self::$orderby = Ui::$sort_widget->orderby();
 
 		self::$columns[] = new ColumnEntity('#');
-		self::$columns[] = new ColumnEntity('registrasiedatum'	, 'Datum'	, function($i, $row_data) { return Fmt::limit($row_data->registrasiedatum, 11, ''); });
-		self::$columns[] = new ColumnEntity('volleNaam'			, 'Besoeker');
-		self::$columns[] = new ColumnEntity('selfoon'			, 'Selfoon'	, function($i, $row_data) { return str_replace(' ', '', $row_data->selfoon?:$row_data->telefoon); });
-		self::$columns[] = new ColumnEntity('epos'				, 'Epos'	);
-		self::$columns[] = new ColumnEntity('solidariteitkontak', 'Kontak'	, function($i, $row_data) { return $row_data->solidariteitkontak?:0; });
-		self::$columns[] = new ColumnEntity('solidariteitlid'	, 'Lid'		, function($i, $row_data) { return empty($row_data->solidariteitlid)?:0; });
+		self::$columns[] = new ColumnEntity('registrasiedatum' , 'Datum'	, function($i, $row_data) { return Fmt::limit($row_data->registrasiedatum, 11, ''); });
+		self::$columns[] = new ColumnEntity('volleNaam'			   , 'Besoeker');
+		self::$columns[] = new ColumnEntity('selfoon'			     , 'Selfoon', function($i, $row_data) { return str_replace(' ', '', $row_data->selfoon?:$row_data->telefoon); });
+		self::$columns[] = new ColumnEntity('epos'				     , 'Epos'	);
+		self::$columns[] = new ColumnEntity('borgkanmykontak'  , 'Kontak'	, function($i, $row_data) { return $row_data->borgkanmykontak?:0; });
+		self::$columns[] = new ColumnEntity('reedsborglid'	   , 'Lid'		, function($i, $row_data) { return empty($row_data->reedsborglid)?:0; });
 
 	}
 
@@ -60,7 +63,7 @@ class SolidariteitModel
 	public static function csvGetPageData($limit)
 	{
 		//Log::debug($limit);
-		return RegistrasiesRepo::krySolidariteitRegistrasies(self::$ekspo_id, $limit, self::$orderby);
+		return RegistrasiesRepo::lysBorgRegistrasies(self::$ekspo_id, $limit, self::$orderby);
 	}
 
 

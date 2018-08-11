@@ -127,8 +127,8 @@ Class Ui
 	?><nav class="row navbar navbar-primary">
 		<ul class="col2 min350 nav">
 			<li><a href="?ekspo=<?=$ekspo_id?>">Kragdag Oorsig</a> | </li>
-			<li><a href="kragdag/registrasies?ekspo=<?=$ekspo_id?>">Registrasies Verslag |</a></li>
-			<li><a href="solidariteit?ekspo=<?=$ekspo_id?>">Solidariteit Verslag</a></li>
+			<li><a href="kragdag/registrasies?ekspo=<?=$ekspo_id?>">Registrasiesverslag |</a></li>
+			<li><a href="borgverslag?ekspo=<?=$ekspo_id?>">Borgverslag</a></li>
 		</ul>
 		<div class="col1 min200 right">
 			<ul class="nav">

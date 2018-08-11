@@ -98,7 +98,7 @@ Class CsvAflaaiDomain
 
 			switch ($tipe)
 			{
-				case 'solidariteit': $csv_file = self::makeCsvFile('SolidariteitModel', 'solidariteit_kragdag');   break;
+				case 'borgverslag': $csv_file = self::makeCsvFile('BorgverslagModel', 'borgverslag_kragdag');   break;
 				case 'registrasies': $csv_file = self::makeCsvFile('RegistrasieModel' , 'kragdag_registrasies');   break;
 				case 'geskiedenis' : $csv_file = self::makeCsvFile('GeskiedenisModel' , 'gebruiker_geskiedenis');  break;
 				case 'verwysings'  : $csv_file = self::makeCsvFile('VerwysingsModel'  , 'registrasie_verwysings'); break;
