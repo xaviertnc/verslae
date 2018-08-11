@@ -1,25 +1,23 @@
 <?php
+
 /**
  * Xap - MySQL Rapid Development Engine for PHP 5.5+
  *
  * @package Xap
- * @copyright 2016 Shay Anderson <http://www.shayanderson.com>
- * @license MIT License <https://github.com/shayanderson/xap/blob/master/LICENSE>
+ * @version 0.0.6
+ * @copyright 2014 Shay Anderson <http://www.shayanderson.com>
+ * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
  * @link <https://github.com/shayanderson/xap>
  */
+
 namespace Xap;
 
 /**
  * Xap Model class
  *
- * @author Shay Anderson <http://www.shayanderson.com/contact>
+ * @author Shay Anderson 07.14 <http://www.shayanderson.com/contact>
  */
-class Model
-{
-	/**
-	 * Default primary key column name
-	 */
-	const DEFAULT_KEY_NAME = 'id';
+class Model {
 
 	/**
 	 * Connection ID
@@ -64,13 +62,6 @@ class Model
 	private $__key;
 
 	/**
-	 * Table primary key names
-	 *
-	 * @var array
-	 */
-	private static $__key_map = [];
-
-	/**
 	 * Query params
 	 *
 	 * @var array
@@ -96,17 +87,17 @@ class Model
 	 *
 	 * @param array $columns
 	 * @param string $table
+	 * @param string $key
 	 * @param int $connection_id
 	 * @param array $query_params
 	 * @param string $query_sql
 	 */
-	public function __construct(array $columns, $table, $connection_id, $query_params, $query_sql,
-		&$decorator = null, &$decorator_filters = null)
+	public function __construct(array $columns, $table, $key, $connection_id, $query_params, $query_sql, &$decorator = null, &$decorator_filters = null)
 	{
 		$this->__data = array_fill_keys($columns, null);
-		$this->__data[self::getTableKey($table, $connection_id)] = null; // init primary key column
+		$this->__data[$key] = null; // init primary key column
 		$this->__table = $table;
-		$this->__key = self::getTableKey($table, $connection_id);
+		$this->__key = $key;
 		$this->__connection_id = $connection_id;
 		$this->__query_params = $query_params;
 		$this->__query_sql = rtrim(rtrim($query_sql), ';') . ' LIMIT 1';
@@ -122,7 +113,7 @@ class Model
 	 */
 	public function __get($name)
 	{
-		if($this->isColumn($name))
+		if ($this->isColumn($name))
 		{
 			return $this->__data[$name];
 		}
@@ -139,11 +130,11 @@ class Model
 	 */
 	public function __set($name, $value)
 	{
-		if($this->isColumn($name))
+		if ($this->isColumn($name))
 		{
 			$this->__data[$name] = $value;
 
-			if($name === $this->__key) // set key value in query params
+			if ($name === $this->__key) // set key value in query params
 			{
 				$this->__query_params = [$this->__key => $value] + $this->__query_params;
 			}
@@ -161,9 +152,9 @@ class Model
 	 */
 	public function __toString()
 	{
-		return $this->__decorator !== null && $this->__is_loaded
-			? Decorate::data($this->__data, $this->__decorator, $this->__decorator_filters)
-			: implode(', ', array_filter($this->__data, function($v) { return $v !== null; }));
+		return $this->__decorator !== null && $this->__is_loaded ? Decorate::data($this->__data, $this->__decorator, $this->__decorator_filters) : implode(', ', array_filter($this->__data, function($v) {
+							return $v !== null;
+						}));
 	}
 
 	/**
@@ -184,7 +175,7 @@ class Model
 	 */
 	private function __validateKeyValue()
 	{
-		if(!isset($this->__data[$this->__key]))
+		if (!isset($this->__data[$this->__key]))
 		{
 			throw new \Exception('Model primary key value is required');
 		}
@@ -199,16 +190,16 @@ class Model
 	 */
 	public function add($ignore_errors = true)
 	{
-		if(count($this->getData(false)) < 1)
+		if (count($this->getData(false)) < 1)
 		{
 			throw new \Exception('Failed to add model record, no columns defined');
 		}
 
 		$affected = Engine::exec([$this->__getConnectionStr() . $this->__table . ':add'
-			. ( $ignore_errors ? '/ignore' : '' ) . $this->__query_sql, $this->getData(false),
-			$this->__query_params]);
+					. ( $ignore_errors ? '/ignore' : '' ) . $this->__query_sql, $this->getData(false),
+					$this->__query_params]);
 
-		if($affected > 0)
+		if ($affected > 0)
 		{
 			// set key value (insert ID)
 			$this->__set($this->__key, Engine::exec([$this->__getConnectionStr() . ':id']));
@@ -229,7 +220,7 @@ class Model
 		$this->__validateKeyValue();
 
 		return Engine::exec([$this->__getConnectionStr() . $this->__table . ':del'
-			. ( $ignore_errors ? '/ignore' : '' ) . $this->__query_sql, $this->__query_params]) > 0;
+					. ( $ignore_errors ? '/ignore' : '' ) . $this->__query_sql, $this->__query_params]) > 0;
 	}
 
 	/**
@@ -241,13 +232,13 @@ class Model
 	{
 		$this->__validateKeyValue();
 
-		$r = Engine::exec([$this->__getConnectionStr() . ':query SELECT EXISTS(SELECT 1 FROM '
-			. $this->__table . $this->__query_sql . ') AS is_record', $this->__query_params]);
+		$r = Engine::exec([$this->__getConnectionStr() . ':query SELECT EXISTS(SELECT 1 FROM ' . $this->__table
+					. $this->__query_sql . ') AS is_record', $this->__query_params]);
 
-		if(isset($r[0]))
+		if (isset($r[0]))
 		{
-			$r = (array)$r[0];
-			return (int)$r['is_record'] > 0;
+			$r = (array) $r[0];
+			return (int) $r['is_record'] > 0;
 		}
 
 		return false;
@@ -271,7 +262,7 @@ class Model
 	 */
 	public function getData($include_key = true)
 	{
-		if($include_key)
+		if ($include_key)
 		{
 			return $this->__data;
 		}
@@ -300,28 +291,6 @@ class Model
 	public function getTable()
 	{
 		return $this->__table;
-	}
-
-	/**
-	 * Table primary key name getter
-	 *
-	 * @param string $table
-	 * @param mixed $connection_id
-	 * @return string
-	 */
-	public static function getTableKey($table, $connection_id = null)
-	{
-		if($connection_id === null)
-		{
-			$connection_id = Engine::DEFAULT_CONNECTION_ID;
-		}
-
-		if(isset(self::$__key_map[$connection_id][$table]))
-		{
-			return self::$__key_map[$connection_id][$table];
-		}
-
-		return self::DEFAULT_KEY_NAME;
 	}
 
 	/**
@@ -354,9 +323,9 @@ class Model
 	public function load($id = 0)
 	{
 		$this->__is_loaded = false; // reset
-		$id = (int)$id;
+		$id = (int) $id;
 
-		if($id > 0)
+		if ($id > 0)
 		{
 			$this->__set($this->__key, $id);
 		}
@@ -367,19 +336,19 @@ class Model
 
 		$cols = count($this->getColumns()) > 1 ? implode(',', $this->getColumns()) : '*';
 
-		$r = Engine::exec([$this->__getConnectionStr() . ':query SELECT ' . $cols . ' FROM '
-			. $this->__table . $this->__query_sql, $this->__query_params]);
+		$r = Engine::exec([$this->__getConnectionStr() . ':query SELECT ' . $cols . ' FROM ' . $this->__table
+					. $this->__query_sql, $this->__query_params]);
 
-		if(isset($r[0]))
+		if (isset($r[0]))
 		{
-			$r = (array)$r[0];
+			$r = (array) $r[0];
 
-			if($cols === '*') // auto define columns
+			if ($cols === '*') // auto define columns
 			{
 				$this->__data = array_fill_keys(array_keys($r), null);
 			}
 
-			if($this->setData($r))
+			if ($this->setData($r))
 			{
 				unset($r);
 				$this->__is_loaded = true;
@@ -398,7 +367,7 @@ class Model
 	 */
 	public function save($ignore_errors = true)
 	{
-		if(count($this->getData(false)) < 1)
+		if (count($this->getData(false)) < 1)
 		{
 			throw new \Exception('Failed to save model record, no columns defined');
 		}
@@ -406,8 +375,8 @@ class Model
 		$this->__validateKeyValue();
 
 		return Engine::exec([$this->__getConnectionStr() . $this->__table . ':mod'
-			. ( $ignore_errors ? '/ignore' : '' ) . $this->__query_sql, $this->getData(false),
-			$this->__query_params]) > 0;
+					. ( $ignore_errors ? '/ignore' : '' ) . $this->__query_sql, $this->getData(false),
+					$this->__query_params]) > 0;
 	}
 
 	/**
@@ -420,9 +389,9 @@ class Model
 	{
 		$is_set = false;
 
-		foreach($columns_and_values as $k => $v)
+		foreach ($columns_and_values as $k => $v)
 		{
-			if($this->__set($k, $v))
+			if ($this->__set($k, $v))
 			{
 				$is_set = true;
 			}
@@ -431,24 +400,4 @@ class Model
 		return $is_set;
 	}
 
-	/**
-	 * Table primary key name setter
-	 *
-	 * @param string $table
-	 * @param string $key_name
-	 * @param mixed $connection_id
-	 * @return void
-	 */
-	public static function setTableKey($table, $key_name, $connection_id = null)
-	{
-		if(!empty($key_name))
-		{
-			if($connection_id === null)
-			{
-				$connection_id = Engine::DEFAULT_CONNECTION_ID;
-			}
-
-			self::$__key_map[$connection_id][$table] = $key_name;
-		}
-	}
 }

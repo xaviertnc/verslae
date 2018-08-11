@@ -1,21 +1,24 @@
 <?php
+
 /**
  * Xap - MySQL Rapid Development Engine for PHP 5.5+
  *
  * @package Xap
- * @copyright 2016 Shay Anderson <http://www.shayanderson.com>
- * @license MIT License <https://github.com/shayanderson/xap/blob/master/LICENSE>
+ * @version 0.0.6
+ * @copyright 2014 Shay Anderson <http://www.shayanderson.com>
+ * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
  * @link <https://github.com/shayanderson/xap>
  */
+
 namespace Xap;
 
 /**
  * Decorate class - decorate strings and data
  *
- * @author Shay Anderson <http://www.shayanderson.com/contact>
+ * @author Shay Anderson 08.14 <http://www.shayanderson.com/contact>
  */
-class Decorate
-{
+class Decorate {
+
 	/**
 	 * Placeholder pattern for '{$(var)?(:callable_filter|:TestYes?:TestNo)?}'
 	 */
@@ -25,8 +28,8 @@ class Decorate
 	 * Placeholder strings
 	 */
 	const
-		PLACEHOLDER_ARRAY_KEY = '{$:key}',
-		PLACEHOLDER_TEST_VALUE_SEP = '?:';
+			PLACEHOLDER_ARRAY_KEY = '{$:key}',
+			PLACEHOLDER_TEST_VALUE_SEP = '?:';
 
 	/**
 	 * Decorate array data
@@ -41,29 +44,26 @@ class Decorate
 	{
 		$str = $decorator;
 
-		preg_replace_callback(self::PATTERN_VAR_PLACEHOLDER, function($m) use(&$data, &$str,
-			&$filters)
-		{
-			if(isset($m[1]) || array_key_exists(1, $m))
+		preg_replace_callback(self::PATTERN_VAR_PLACEHOLDER, function($m) use(&$data, &$str, &$filters) {
+			if (isset($m[1]) || array_key_exists(1, $m))
 			{
-				if(empty($m[1])) // callable filter no key
+				if (empty($m[1])) // callable filter no key
 				{
-					if(isset($filters[$m[2]]) && is_callable($filters[$m[2]]))
+					if (isset($filters[$m[2]]) && is_callable($filters[$m[2]]))
 					{
 						$str = str_replace($m[0], $filters[$m[2]]($data), $str);
 					}
 				}
-				else if((isset($data[$m[1]]) || array_key_exists($m[1], $data))
-					&& (is_scalar($data[$m[1]]) || $data[$m[1]] === null))
+				else if ((isset($data[$m[1]]) || array_key_exists($m[1], $data)) && (is_scalar($data[$m[1]]) || $data[$m[1]] === null))
 				{
-					if(isset($m[2])) // callable filter with key or test value
+					if (isset($m[2])) // callable filter with key or test value
 					{
-						if(strpos($m[2], self::PLACEHOLDER_TEST_VALUE_SEP) !== false) // test value
+						if (strpos($m[2], self::PLACEHOLDER_TEST_VALUE_SEP) !== false) // test value
 						{
 							$str = str_replace($m[0], self::test($data[$m[1]], $m[2]), $str);
 						}
 						// apply callable filter
-						else if(isset($filters[$m[2]]) && is_callable($filters[$m[2]]))
+						else if (isset($filters[$m[2]]) && is_callable($filters[$m[2]]))
 						{
 							$str = str_replace($m[0], $filters[$m[2]]($data[$m[1]]), $str);
 						}
@@ -91,23 +91,23 @@ class Decorate
 	{
 		$str = '';
 
-		if(is_object($data))
+		if (is_object($data))
 		{
-			$data = (array)$data;
+			$data = (array) $data;
 		}
 
-		foreach($data as $k => $v)
+		foreach ($data as $k => $v)
 		{
-			if(is_object($v))
+			if (is_object($v))
 			{
-				$v = (array)$v;
+				$v = (array) $v;
 			}
 
-			if(is_array($v)) // multidimensional array
+			if (is_array($v)) // multidimensional array
 			{
 				$str .= self::__decorateArray($v, $decorator, $filters, $k);
 			}
-			else if(is_scalar($v)) // single array
+			else if (is_scalar($v)) // single array
 			{
 				$str = self::__decorateArray($data, $decorator, $filters);
 			}
@@ -126,15 +126,12 @@ class Decorate
 	 */
 	public static function string($string, $decorator, $filters = null)
 	{
-		if(is_scalar($string))
+		if (is_scalar($string))
 		{
-			preg_replace_callback(self::PATTERN_VAR_PLACEHOLDER, function($m) use(&$string,
-				&$decorator, &$filters)
-			{
-				if(isset($m[2])) // callable filter
+			preg_replace_callback(self::PATTERN_VAR_PLACEHOLDER, function($m) use(&$string, &$decorator, &$filters) {
+				if (isset($m[2])) // callable filter
 				{
-					// apply callable filter
-					if(isset($filters[$m[2]]) && is_callable($filters[$m[2]]))
+					if (isset($filters[$m[2]]) && is_callable($filters[$m[2]])) // apply callable filter
 					{
 						$decorator = str_replace($m[0], $filters[$m[2]]($string), $decorator);
 					}
@@ -158,9 +155,9 @@ class Decorate
 	 */
 	public static function test($value, $decorator)
 	{
-		if(($pos = strpos($decorator, self::PLACEHOLDER_TEST_VALUE_SEP)) !== false)
+		if (($pos = strpos($decorator, self::PLACEHOLDER_TEST_VALUE_SEP)) !== false)
 		{
-			if(!empty($value))
+			if (!empty($value))
 			{
 				return trim(substr($decorator, 0, $pos));
 			}
@@ -172,4 +169,5 @@ class Decorate
 
 		return $decorator;
 	}
+
 }

@@ -1,21 +1,24 @@
 <?php
+
 /**
  * Xap - MySQL Rapid Development Engine for PHP 5.5+
  *
  * @package Xap
- * @copyright 2016 Shay Anderson <http://www.shayanderson.com>
- * @license MIT License <https://github.com/shayanderson/xap/blob/master/LICENSE>
+ * @version 0.0.6
+ * @copyright 2014 Shay Anderson <http://www.shayanderson.com>
+ * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
  * @link <https://github.com/shayanderson/xap>
  */
+
 namespace Xap;
 
 /**
  * Xap Cache class
  *
- * @author Shay Anderson <http://www.shayanderson.com/contact>
+ * @author Shay Anderson 08.14 <http://www.shayanderson.com/contact>
  */
-class Cache
-{
+class Cache {
+
 	/**
 	 * Expire time
 	 *
@@ -121,14 +124,13 @@ class Cache
 	 */
 	public static function getKey(&$connection_id, &$query, &$query_params)
 	{
-		if(self::$__key !== null) // custom key
+		if (self::$__key !== null) // custom key
 		{
 			return self::$__key;
 		}
 
 		return ( self::$__key_prefix !== null ? self::$__key_prefix . '-' : '' )
-			. sha1($connection_id . $query . ( is_array($query_params)
-			? implode('', $query_params) : null ));
+				. sha1($connection_id . $query . ( is_array($query_params) ? implode('', $query_params) : null ));
 	}
 
 	/**
@@ -149,15 +151,15 @@ class Cache
 	 */
 	public static function has($key)
 	{
-		if(is_readable(self::$__path . $key))
+		if (is_readable(self::$__path . $key))
 		{
-			if(strcasecmp(self::getExpire(), 'never') === 0) // never expire cache
+			if (strcasecmp(self::getExpire(), 'never') === 0) // never expire cache
 			{
 				self::__reset();
 				return true;
 			}
 
-			if(@filemtime(self::$__path . $key) < strtotime(self::$__expire)) // expire cache
+			if (@filemtime(self::$__path . $key) < strtotime(self::$__expire)) // expire cache
 			{
 				self::__reset();
 				return false;
@@ -179,9 +181,7 @@ class Cache
 	 */
 	public static function read($key)
 	{
-		return (bool)self::$use_compression
-			? @unserialize(gzuncompress(base64_decode(file_get_contents(self::$__path . $key))))
-			: @unserialize(base64_decode(file_get_contents(self::$__path . $key)));
+		return (bool) self::$use_compression ? @unserialize(gzuncompress(base64_decode(file_get_contents(self::$__path . $key)))) : @unserialize(base64_decode(file_get_contents(self::$__path . $key)));
 	}
 
 	/**
@@ -193,10 +193,10 @@ class Cache
 	 */
 	public static function setCacheKey($key)
 	{
-		if(!preg_match('/^[\w\-]+$/', $key))
+		if (!preg_match('/^[\w\-]+$/', $key))
 		{
 			throw new \Exception('Failed to set cache key \'' . $key
-				. '\', inavlid characters, only \w + \'-\' characters allowed');
+			. '\', inavlid characters, only \w + \'-\' characters allowed');
 		}
 
 		self::$__key = $key;
@@ -257,15 +257,12 @@ class Cache
 	 */
 	public static function &write($key, $data)
 	{
-		if((bool)self::$use_compression
-			? @file_put_contents(self::$__path . $key,
-				base64_encode(gzcompress(serialize($data))), LOCK_EX) === false
-			: @file_put_contents(self::$__path . $key,
-				base64_encode(serialize($data)), LOCK_EX) === false)
+		if ((bool) self::$use_compression ? @file_put_contents(self::$__path . $key, base64_encode(gzcompress(serialize($data))), LOCK_EX) === false : @file_put_contents(self::$__path . $key, base64_encode(serialize($data)), LOCK_EX) === false)
 		{
 			throw new \Exception('Failed to write cache file \'' . self::$__path . $key . '\'');
 		}
 
 		return $data;
 	}
+
 }

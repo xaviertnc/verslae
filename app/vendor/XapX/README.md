@@ -18,7 +18,6 @@ Here is a list of Xap commands:
 - [`add`](https://github.com/shayanderson/xap#insert) - insert record (can also use `insert`)
 - [`call`](https://github.com/shayanderson/xap#call-stored-procedurefunction-routines) - call stored procedure or function (and [`call_affected`](https://github.com/shayanderson/xap#call-stored-procedurefunction-routines) and [`call_rows`](https://github.com/shayanderson/xap#call-stored-procedurefunction-routines))
 - [`cache`](https://github.com/shayanderson/xap#caching) - set single cache expire time
-- [`close`](https://github.com/shayanderson/xap#close-connection) - close the database connection
 - [`columns`](https://github.com/shayanderson/xap#show-table-columns) - show table columns
 - [`commit`](https://github.com/shayanderson/xap#transactions) - commit transaction
 - [`count`](https://github.com/shayanderson/xap#count-query) - count table records
@@ -28,7 +27,7 @@ Here is a list of Xap commands:
 - [`error_last`](https://github.com/shayanderson/xap#get-last-error) - get last error, when error has occurred
 - [`exists`](https://github.com/shayanderson/xap#records-exist) - check if record exists
 - [`id`](https://github.com/shayanderson/xap#insert-with-insert-id) - get last insert ID
-- [`limit`](https://github.com/shayanderson/xap#global-limit) - global max limit for queries
+- [`key`](https://github.com/shayanderson/xap#custom-table-primary-key-column-name) - get/set table primary key column name (default 'id')
 - [`log`](https://github.com/shayanderson/xap#debug-log) - get debug log (debugging must be turned on)
 - [`log_handler`](https://github.com/shayanderson/xap#custom-log-handler) - add log message to database log (debugging must be turned on)
 - [`mod`](https://github.com/shayanderson/xap#update) - update record(s) (can also use `update`)
@@ -42,12 +41,12 @@ Here is a list of Xap commands:
 
 Xap supports:
 
+- [Custom primary key name](https://github.com/shayanderson/xap#custom-table-primary-key-column-name)
 - [Custom log handler](https://github.com/shayanderson/xap#custom-log-handler)
 - [Custom error handler](https://github.com/shayanderson/xap#custom-error-handler)
 - [Query options](https://github.com/shayanderson/xap#query-options)
 - [Multiple database connections](https://github.com/shayanderson/xap#multiple-database-connections)
 - [Pagination](https://github.com/shayanderson/xap#pagination)
-- [Pagination Helper Class](https://github.com/shayanderson/xap#pagination-helper-class)
 - [Data Modeling (ORM)](https://github.com/shayanderson/xap#data-modeling)
 - [Data Decorators](https://github.com/shayanderson/xap#data-decorators)
 - [Caching](https://github.com/shayanderson/xap#caching)
@@ -74,7 +73,7 @@ require_once './xap.bootstrap.php';
 
 Now execute SELECT query:
 ```php
-$user = xap('users WHERE id = ?', [14]); // same as "SELECT * FROM users WHERE id = '14'"
+$user = xap('users.14'); // same as "SELECT * FROM users WHERE id = '14'"
 if($user) echo $user->fullname; // print record column value
 ```
 
@@ -105,6 +104,32 @@ $r = xap('users(fullname, email) WHERE is_active = ? AND fullname = ? LIMIT 2',
 	[1, 'Shay Anderson']);
 ```
 
+#### Select with Key
+Select queries with primary key value:
+```php
+$r = xap('users.2'); // SELECT * FROM users WHERE id = '2'
+// test if record exists + display value for column 'fullname'
+if($r) echo $r->fullname;
+
+// using plain SQL in query example
+// SELECT fullname, is_active FROM users WHERE id = '2' AND fullname = 'Shay'
+$r = xap('users(fullname, is_active).2 WHERE fullname = ?', ['Name']);
+```
+> Query options can be used when selecting with key like:
+```php
+$q = xap('users.14/query');
+// or with columns
+$q = xap('users.14(fullname, is_active)/query');
+```
+
+When selecting with key use integer values only, for example:
+```php
+$r = xap('users.' . (int)$id);
+```
+> The default primary key column name is `id`, for using different primary key column name see [custom table primary key column name](https://github.com/shayanderson/xap#custom-table-primary-key-column-name)
+
+<blockquote>Select with key command <i>cannot</i> use commands like <code>:command</code></blockquote>
+
 #### Select Distinct
 Select distinct example query:
 ```php
@@ -126,7 +151,7 @@ The `replace` command can also be used, for example:
 ```php
 // REPLACE INTO users (id, fullname, is_active, created)
 //	VALUES(5, 'Name Here', '1', NOW())
-$affected_rows = xap('users:replace', ['id' => 5, 'fullname' => 'Name Here',
+$affected_rows = xap('users:replace', ['id' => 5 'fullname' => 'Name Here',
 	'is_active' => 1, 'created' => ['NOW()']]);
 ```
 
@@ -213,7 +238,7 @@ $r = xap(':query SELECT * FROM users LIMIT 2');
 // use params with manual query:
 $r = xap(':query SELECT * FROM users WHERE user_id = ?', [2]);
 ```
-> The query command can use these query options: [/query](https://github.com/shayanderson/xap#query-option), [/first](https://github.com/shayanderson/xap#first-option), [/value](https://github.com/shayanderson/xap#value-option), [/pagination](https://github.com/shayanderson/xap#pagination), [/cache](https://github.com/shayanderson/xap#caching). For example:
+> The query command can use these query options: [/query](https://github.com/shayanderson/xap#query-option), [/first](https://github.com/shayanderson/xap#first-option), [/pagination](https://github.com/shayanderson/xap#pagination), [/cache](https://github.com/shayanderson/xap#caching). For example:
 ```php
 $query_string = $r = xap(':query/query SELECT * FROM users LIMIT 2');
 ```
@@ -318,29 +343,12 @@ Show table columns query example:
 $columns = xap('users:columns'); // returns array of table column names
 ```
 
-#### Global Limit
-A global max limit can be set to force max limits, for example:
-```php
-// the query below may crash if too many records exist (exceeds memory limit)
-$docs = xap('documents'); // SELECT * FROM documents
-// this problem can be solved globally by using global limit
-xap(':limit 50'); // now all select queries auto use limit
-$docs = xap('documents'); // SELECT * FROM documents LIMIT 50
-$users = xap('users'); // SELECT * FROM users LIMIT 50
-// reset limit
-xap(':limit'); // or xap(':limit 0')
-$docs = xap('documents'); // SELECT * FROM documents
-```
-The global limit will *not* override a LIMIT clause already in a query.
-> Global limit will not work with other options like `/first`, `/model`, `/pagination`, `/value`
-
 #### Debug Log
 Get debug log array example:
 ```php
 $log = xap(':log'); // returns array of debug log messages
 ```
-Debug mode must be enabled for this example
-> The default log handler retains the most recent five thousand log messages (memory safe). A [custom log handler](https://github.com/shayanderson/xap#custom-log-handler) can except all log messages.
+> Debug mode must be enabled for this example
 
 #### Error Checking
 Check if error has occurred when errors are *on* (throws exceptions) example:
@@ -380,25 +388,29 @@ if(xap(':error'))
 > For getting last error message errors must be disabled, otherwise exception is thrown
 
 #### Debugging
-To display all registered connections, debug log and errors use:
+To display all registered connections, mapped keys, debug log and errors use:
 ```php
 print_r( xap(':debug') ); // returns array with debug info
 ```
 
-#### Close Connection
-A database connection can be closed using the close command:
+## Advanced
+### Custom Table Primary Key Column Name
+By default the primary key column named used when selecting with key is 'id'.
+ This can be changed using the 'key' or 'keys' command:
 ```php
-xap(':close');
-```
-> All database connections will automatically close, but the close command can be used explicitly when runtime between database calls exceeds the connection timeout - and can eliminate errors like `server has gone away`, for example:
-```php
-xap(':call spProcessQueue'); // long runtime
-xap(':close'); // close connection
-// below query will automatically open new connection
-xap('job_queue:count WHERE status = 0');
+// register 'user_id' as primary key column name for table 'users'
+xap('users:key user_id');
+
+// now 'WHERE id = 2' becomes 'WHERE user_id = 2'
+$r = xap('users.2'); // SELECT * FROM users WHERE user_id = '2'
+
+// also register multiple key column names:
+xap(':key', [
+	'users' => 'user_id',
+	'orders' => 'order_id'
+]);
 ```
 
-## Advanced
 ### Custom Log Handler
 A custom log handler can be used when setting a database connection, for example:
 ```php
@@ -487,21 +499,7 @@ This can simplify using the first record only instead of having to use:
 ```php
 if(isset($user[0])) echo $user[0]->fullname;
 ```
-> The `first` option will auto limit the rows to 1, multiple rows are not allowed
-
-##### Value Option
-The `value` option is used to return the first value only (scalar), for example:
-```php
-$fullname = xap('users(fullname)/value WHERE id = ?', [1]); // string
-```
-If multiple columns are in the query only the first column value is returned, example:
-```php
-$email = xap(':query/value SELECT email, fullname FROM users WHERE id = ?', [1]); // string
-```
-> The `value` option will auto limit the rows to 1, multiple rows are not allowed
-
-##### Other Options
-Other options not mentioned here are: [`/cache`](https://github.com/shayanderson/xap#caching), [`/pagination`](https://github.com/shayanderson/xap#pagination) and [`/model`](https://github.com/shayanderson/xap#data-modeling)
+> Other options not mentioned here are: [`/cache`](https://github.com/shayanderson/xap#caching), [`/pagination`](https://github.com/shayanderson/xap#pagination) and [`/model`](https://github.com/shayanderson/xap#data-modeling)
 
 ### Multiple Database Connections
 Using multiple database connections is easy, register database connections in bootstrap:
@@ -560,72 +558,6 @@ if($r['pagination']->prev > 0)
 **Note:** Pagination can also use [decorators](https://github.com/shayanderson/xap#decorators-with-pagination).
 > Pagination only works on select commands like `users(id, fullname)/pagination` and select queries like `:query/pagination SELECT id, fullname FROM users`
 
-### Pagination Helper Class
-> Before reading this section read the [Pagination section](https://github.com/shayanderson/xap#pagination)
-
-The `\Xap\Pagination` helper class can be used to simplify pagination, for example:
-```php
-// set GET var name for current page if not the default 'pg'
-// \Xap\Pagination::$conf_page_get_var = 'pg';
-
-// set object
-$pagination = new \Xap\Pagination(xap('users/pagination'));
-
-if($pagination->has_rows)
-{
-	foreach($pagination->rows as $v) // access rows
-
-	// print pagination controls
-	echo $pagination;
-}
-```
-HTML can be added to style the controls:
-```php
-// change default link HTML
-\Xap\Pagination::$conf_html_next = '<li><a href="{$uri}">Next &raquo;</a></li>';
-\Xap\Pagination::$conf_html_prev = '<li><a href="{$uri}">&laquo; Previous</a></li>';
-
-// HTML wrapper around all controls
-\Xap\Pagination::$conf_html_wrapper_before = '<div class="pagination"><ul>';
-\Xap\Pagination::$conf_html_wrapper_after = '</ul></div>';
-
-// then use object
-$pagination = new \Xap\Pagination(xap('users/pagination'));
-```
-The URI can be appended with `#jump-here` by using:
-```php
-$pagination = new \Xap\Pagination(xap('users/pagination', '#jump-here'));
-```
-A previous page numbers range can be displayed, for example:
-```php
-// optional, globally enable
-// \Xap\Pagination::$conf_prev_page_range = true;
-// optional, globally set total number of page numbers to display (default is 5)
-// \Xap\Pagination::$conf_prev_page_range_count = 5;
-
-// set HTML wrapper
-\Xap\Pagination::$conf_html_prev_page_range = '<li><a href="{$uri}">{$number}</a></li>';
-// set active page HTML
-\Xap\Pagination::$conf_html_prev_page_range_active = '<a href="#">{$number}</a>';
-
-// then use object
-$pagination = new \Xap\Pagination(xap('users/pagination'), null, true); // enable for this object only
-// optonal, set page numbers to display for object only
-// $pagination = new \Xap\Pagination(xap('users/pagination'), null, true, 10);
-```
-A page number filter can be used to modify page numbers, for example:
-```php
-\Xap\Pagination::$conf_page_num_filter = function($n) { return base64_encode($n); };
-// then use object
-// $pagination = new \Xap\Pagination(x);
-```
-
-> When setting the pagination object there is an option to set the first URI, meaning the URI used for the first page (when no more previous pages are availble), for example:
-```php
-$pagination = new \Xap\Pagination(xap('users/pagination', null, false, 0, '/user/view'));
-```
-This does not need to be set because the pagination object uses auto first URI logic - but that can be overridden by using the option above
-
 ### Data Modeling
 Data Modeling (or ORM) can be used in Xap. First, ensure the `\Xap\Model` class is included in the `xap.bootstrap.php` file:
 ```php
@@ -640,13 +572,7 @@ if($user->load()) // load record data
 	echo $user->fullname;
 }
 ```
-> If the table primary key column name is not `id` use the `\Xap\Model::setTableKey(table, key_name)` method, for example:
-```php
-\Xap\Model::setTableKey('users', 'user_id'); // must do BEFORE using model
-$user = xap('users/model'); // \Xap\Model object
-$user->user_id = 14;
-$user->load();
-```
+> If the table primary key column name is not `id` use [custom table primary key column name](https://github.com/shayanderson/xap#custom-table-primary-key-column-name)
 
 This can also be done using:
 ```php

@@ -1,10 +1,19 @@
 <?php
+
+include 'Engine.php';
+
+// include 'Model.php';
+// include 'Decorate.php';
+// include 'Cache.php';
+
+
 /**
  * Xap - MySQL Rapid Development Engine for PHP 5.5+
  *
  * @package Xap
- * @copyright 2016 Shay Anderson <http://www.shayanderson.com>
- * @license MIT License <https://github.com/shayanderson/xap/blob/master/LICENSE>
+ * @version 0.0.6
+ * @copyright 2014 Shay Anderson <http://www.shayanderson.com>
+ * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
  * @link <https://github.com/shayanderson/xap>
  */
 
@@ -33,7 +42,7 @@
  *		tables		(show database tables)
  *		transaction	(start transaction)
  *
- * @author Shay Anderson <http://www.shayanderson.com/contact>
+ * @author Shay Anderson 07.14 <http://www.shayanderson.com/contact>
  *
  * @param string $cmd
  * @param mixed $_ (optional values)

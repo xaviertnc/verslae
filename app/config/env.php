@@ -2,11 +2,11 @@
 
 function detect_environment()
 {
-    //$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : null;
+  $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : null;
 
 	// local: Use a local version of the production database (Will need to merge changes
 	// to the actual actual production database later. (For off-site emergency transactions)
-	//if ($host == 'localhost' or strpos($host, '.local' )) { return 'local'; }
+	if ($host == 'localhost' or strpos($host, '.local' )) { return 'dev'; }
 
 	// development: Use a copy of the production database, but don't care about the data. No need
 	// to merge changes later! Just replace with a newer copy from time to time.
@@ -65,7 +65,7 @@ switch (__ENV__)
     case 'dev':
         define('__DEBUG__', true);
         define('__DEBUG_LEVEL__', 'TRACE');	// DETAIL, TRACE, EVENT, ERROR
-        define('__WEBROOT__', '/kragdag/verslae/');	// Trailing '/' very important!  Only add for HOME!!!
+        define('__WEBROOT__', '/verslae/');	// Trailing '/' very important!  Only add for HOME!!!
 
 		define('__LOGIN_URL__', __WEBROOT__ . 'tekenin/');
 		define('__GUEST_HOME_URL__', __LOGIN_URL__);
@@ -84,7 +84,7 @@ switch (__ENV__)
     default:
         define('__DEBUG__', false);
         define('__DEBUG_LEVEL__', 'ERROR');			// DETAIL, TRACE, EVENT, ERROR
-        define('__WEBROOT__', '/kragdag/verslae/');	// Trailing '/' very important!  Only add for HOME!!!
+        define('__WEBROOT__', '/verslae/');	// Trailing '/' very important!  Only add for HOME!!!
 
 		define('__LOGIN_URL__', __WEBROOT__ . 'tekenin/');
 		define('__GUEST_HOME_URL__', __LOGIN_URL__);
