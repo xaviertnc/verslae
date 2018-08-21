@@ -12,7 +12,7 @@ Ui::init(['base-url' => 'kragdag/geskiedenis/', 'itemspp' => 23]);
 
 $gebruiker = Auth::check('super');
 
-$modules = ['Geen', 'Admin', 'Uitstaller', 'Besoeker', 'Registrasie', 'Ontvangs', 'Webtuiste', 'Toets'];
+$modules = ['Geen', 'Admin', 'Uitstaller', 'Besoeker', 'Registrasie', 'Ontvangs', 'Versale', 'Webtuiste', 'Toets'];
 $keepParams = ['p', 'ipp', 'dlg', 'sort', 'dir', 'ekspo'];
 $removeParams = [];
 

@@ -19,11 +19,12 @@ class Journal
 		$data = array(
 			'tipe_id' => $entry_type_id,
 			'gebruiker_id' => $auth_user_id,
-			'module_id' => 3,
+			'module_id' => 6,
 			'beskrywing' => $message
 		);
 
 		DB::insertInto('tblgeskiedenis', $data);
+    
 	}
 
 }
