@@ -12,7 +12,7 @@ Ui::init(['base-url' => 'kragdag/geskiedenis/', 'itemspp' => 23]);
 
 $gebruiker = Auth::check('super');
 
-$modules = ['Geen', 'Registrasie', 'Ontvangs', 'Verslae'];
+$modules = ['Geen', 'Admin', 'Uitstaller', 'Besoeker', 'Registrasie', 'Ontvangs', 'Webtuiste', 'Toets'];
 $keepParams = ['p', 'ipp', 'dlg', 'sort', 'dir', 'ekspo'];
 $removeParams = [];
 
@@ -60,11 +60,18 @@ switch (Request::$method)
 		if ($limit) $limit = ' LIMIT ' . $limit;
 
 		$inskrywings = DB::select('view_geskiedenis' . $orderby . $limit);
+    
+    $gebruikersLys = GeskiedenisModel::lysGebruikers();
+    
+    $gebruikersIndeks = [];
+    foreach ($gebruikersLys as $gebruiker)
+    {
+      $gebruikersIndeks[$gebruiker->id] = $gebruiker->naam;
+    }
 
 		$opskrif = 'Gebruiker Geskiedenis';
 
 		break;
-
 
 	default:
 		Errors::raise('Invalid Request');
@@ -117,11 +124,11 @@ switch (Request::$method)
 			<thead>
 				<tr style="background-color:#005500">
 					<th class="hide-sm" style="width:44px">#</th>
-					<th style="width:160px"><?=Ui::$sort_widget->renderLink('Tyd', 'tyd')?></th>
-					<th class="hide-sm" style="width:140px"><?=Ui::$sort_widget->renderLink('Gebruiker', 'gebruiker')?></th>
+					<th style="width:160px"><?=Ui::$sort_widget->renderLink('Tyd', 'datum')?></th>
+					<th class="hide-sm" style="width:50px"><?=Ui::$sort_widget->renderLink('Gebruiker', 'gebruiker_id')?></th>
 					<th class="hide-sm" style="width:65px"><?=Ui::$sort_widget->renderLink('Module', 'module_id')?></th>
-					<th class="hide-sm" style="width:190px"><?=Ui::$sort_widget->renderLink('Aksie', 'inskrywing_subtiepe')?></th>
-					<th><?=Ui::$sort_widget->renderLink('Besonderhede', 'detail')?></th>
+					<th class="hide-sm" style="width:130px"><?=Ui::$sort_widget->renderLink('Aksie', 'subtiepe')?></th>
+					<th><?=Ui::$sort_widget->renderLink('Besonderhede', 'beskrywing')?></th>
 <!--
 					<th class="actions" style="width:80px">Instruksies</th>
 -->
@@ -131,11 +138,13 @@ switch (Request::$method)
 				echo PHP_EOL; foreach ($inskrywings as $index => $item):?>
 				<tr>
 					<td class="hide-sm"><?=Ui::$pager_widget->offset+$index+1?>.</td>
-					<td title="<?=$item->tyd?>"><?=$item->tyd?></td>
-					<td class="hide-sm nowrap max120" title="<?=$item->gebruiker?>"><?=$item->gebruiker?:'Gebruiker'?></td>
+					<td title="<?=$item->datum?>"><?=$item->datum?></td>
+					<td class="hide-sm nowrap max50" title="<?=$item->gebruiker_id?>">
+            <?=array_get($gebruikersIndeks, $item->gebruiker_id, 'Onbekend')?>
+          </td>
 					<td class="hide-sm nowrap max50" title="<?=$modules[$item->module_id]?>"><?=$modules[$item->module_id]?></td>
-					<td class="hide-sm nowrap max120" title="<?=$item->inskrywing_subtipe?>"><?=$item->inskrywing_subtipe?></td>
-					<td class="nowrap max150" title="<?=$item->detail?>"><?=$item->detail?></td>
+					<td class="hide-sm nowrap max50" title="<?=$item->subtipe?>"><?=$item->subtipe?></td>
+					<td class="nowrap max150" title="<?=$item->beskrywing?>"><?=$item->beskrywing?></td>
 <!--
 					<td>&nbsp;</td>
 -->

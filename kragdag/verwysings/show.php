@@ -50,7 +50,7 @@ switch (Request::$method)
 		$itemspp = Request::get('ipp', Ui::$itemspp);
 		$ekspo_id = Request::get('ekspo', __HUIDIGE_EKSPO_ID__);
 
-		$itemcount = DB::count('view_verwysings', "WHERE ekspo_id=? AND epos1 LIKE '%@%'", [$ekspo_id]);
+		$itemcount = DB::count('view_verwysings', 'WHERE ekspo_id=?', [$ekspo_id]);
 
 		Ui::handle_popups(Request::get('dlg'), $keepParams);
 		Ui::$pager_widget->config(Ui::$base_url, $itemcount, $itemspp, $pageno, $keepParams);
@@ -62,7 +62,7 @@ switch (Request::$method)
 		$limit = Ui::$pager_widget->limit();
 		if ($limit) $limit = ' LIMIT ' . $limit;
 
-		$verwysings = DB::select("view_verwysings WHERE ekspo_id=? AND epos1 LIKE '%@%'" . $orderby . $limit, [$ekspo_id]);
+		$verwysings = DB::select('view_verwysings WHERE ekspo_id=?' . $orderby . $limit, [$ekspo_id]);
 		$ekspos = EksposRepo::kryEkspos();
 		$ekspo = EkspoModel::kiesEeen($ekspos, $ekspo_id);
 
@@ -137,7 +137,13 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 			</div>
 		</div>
 
-		<?=$listview_widget->render($verwysings, 'list w100', ['ekspo_id', 'verwyser_epos'])?>
+		<?=$listview_widget->render($verwysings, 'list w100', [
+      'ekspo_id',
+      'besoeker_id',
+      'besoekerSelfoon',
+      'besoekerTel',
+      'besoekerKryNuusbrief',
+      'besoekerUnsubscribed'])?>
 
 		<div class="pager right">
 			<small>Items: <?=Ui::$pager_widget->offset+1?> tot <?=min(Ui::$pager_widget->offset+Ui::$pager_widget->itemspp, Ui::$pager_widget->itemscount)?> van <?=Ui::$pager_widget->itemscount?></small>

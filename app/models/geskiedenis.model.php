@@ -55,6 +55,14 @@ Class GeskiedenisModel
 	}
 
 
+	public static function lysGebruikers()
+	{
+		//Log::debug('GeskiedenisModel::lysGebruikers()');
+		$gebruikers = DB::select('tblgebruikers');
+		return $gebruikers;
+	}
+  
+
 	public static function csvGetLine($lineno, $line_data)
 	{
 		$line = [];

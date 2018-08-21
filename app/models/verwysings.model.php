@@ -51,7 +51,7 @@ Class VerwysingsModel
 	{
 		$orderby = self::$orderby ? ' ORDER BY ' . self::$orderby : '';
 		if ($limit) $limit = ' LIMIT ' . $limit;
-		$verwysings = DB::select("view_verwysings WHERE (ekspo_id=? AND epos1 LIKE '%@%')" . $orderby . $limit, [self::$ekspo_id]);
+		$verwysings = DB::select('view_verwysings WHERE ekspo_id=?' . $orderby . $limit, [self::$ekspo_id]);
 		//Log::debug('VerwysingsModel::csvGetPageData(), limit = ' . $limit . ', data = ' . ($verwysings?count($verwysings):'null'));
 		return $verwysings;
 	}
