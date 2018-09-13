@@ -126,8 +126,8 @@ Class Ui
 		if ($gebruiker = Auth::getAuthUser() and $gebruiker->toegang == 'super') { ob_start();
 	?><nav class="row navbar navbar-primary">
 		<ul class="col2 min350 nav">
-			<li><a href="?ekspo=<?=$ekspo_id?>">Kragdag Oorsig</a> | </li>
-			<li><a href="kragdag/registrasies?ekspo=<?=$ekspo_id?>">Registrasiesverslag |</a></li>
+			<li><a href="?ekspo=<?=$ekspo_id?>">Tuisskool Oorsig</a> | </li>
+			<li><a href="tuisskool/registrasies?ekspo=<?=$ekspo_id?>">Registrasiesverslag |</a></li>
 			<li><a href="borgverslag?ekspo=<?=$ekspo_id?>">Borgverslag</a></li>
 		</ul>
 		<div class="col1 min200 right">
@@ -141,7 +141,7 @@ Class Ui
 
 	public static function footer()
 	{
-		$html = '&copy; KragDag ' . date('Y');
+		$html = '&copy; Tuisskool ' . date('Y');
 		if ($user = Auth::getAuthUser() and $user->toegang == 'super')
 		{
 			$html .= ', env=' . __ENV__ . ', ver=' . __VER__ . ', db=' . Config::get('database.connections.mysql.DBNAME');

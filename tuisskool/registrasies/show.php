@@ -1,22 +1,21 @@
-<?php // verslae/kragdag/verwysings/show.php - KRAGDAG VERWYSINGS
+<?php // verslae/tuisskool/registrasies/show.php - KRAGDAG REGISTRASIES VERSLAG
 
 include '../../app/bootstrap.php';
 
 include __MODELS__  . '/ekspo.model.php';
 include __MODELS__  . '/ekspos.repo.php';
 include __MODELS__  . '/column.entity.php';
-include __MODELS__  . '/verwysings.model.php';
+include __MODELS__  . '/registrasie.model.php';
+include __MODELS__  . '/registrasies.repo.php';
 include __MODELS__  . '/csv-aflaai.domain.php';
 
-include __WIDGETS__  . '/objectview.widget.php';
-include __WIDGETS__  . '/listview.widget.php';
 
-Ui::init(['base-url' => 'kragdag/verwysings/', 'itemspp' => 21]);
+Ui::init(['base-url' => 'tuisskool/registrasies/', 'itemspp' => 17]);
 
 
 $gebruiker = Auth::check('super');
 
-$keepParams = ['p', 'ipp', 'dlg', 'sort', 'dir', 'ekspo'];
+$keepParams = ['p', 'ipp', 'ekspo', 'dlg', 'sort', 'dir'];
 $removeParams = [];
 
 
@@ -49,24 +48,21 @@ switch (Request::$method)
 		$pageno = Request::get('p', 1);
 		$itemspp = Request::get('ipp', Ui::$itemspp);
 		$ekspo_id = Request::get('ekspo', __HUIDIGE_EKSPO_ID__);
+    
+		$opsomming = RegistrasiesRepo::kryRegistrasiesOpsomming($ekspo_id);
 
-		$itemcount = DB::count('view_verwysings', 'WHERE ekspo_id=?', [$ekspo_id]);
+    // die('Fuck');
 
 		Ui::handle_popups(Request::get('dlg'), $keepParams);
-		Ui::$pager_widget->config(Ui::$base_url, $itemcount, $itemspp, $pageno, $keepParams);
+		Ui::$pager_widget->config(Ui::$base_url, $opsomming->totaal, $itemspp, $pageno, $keepParams);
 		Ui::$sort_widget->config(Ui::$base_url, 'desc', $keepParams);
 
-		$orderby = Ui::$sort_widget->orderby();
-		if ($orderby) $orderby = ' ORDER BY ' . $orderby;
-
-		$limit = Ui::$pager_widget->limit();
-		if ($limit) $limit = ' LIMIT ' . $limit;
-
-		$verwysings = DB::select('view_verwysings WHERE ekspo_id=?' . $orderby . $limit, [$ekspo_id]);
+		$registrasies = RegistrasiesRepo::lysRegistrasies($ekspo_id, Ui::$pager_widget->limit(), Ui::$sort_widget->orderby());
 		$ekspos = EksposRepo::kryEkspos();
-		$ekspo = EkspoModel::kiesEeen($ekspos, $ekspo_id);
 
-		$opskrif = 'Registrasie Verwysings';
+		$geselekteerde_ekspo = EkspoModel::kiesEeen($ekspos, $ekspo_id);
+
+		$opskrif = 'Tuisskool Registrasies';
 
 		break;
 
@@ -76,12 +72,10 @@ switch (Request::$method)
 }
 
 
-$listview_widget = new ListViewWidget();
-
 Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ekspoSel.change(function(){$("#filters-form").submit();return false;});'); // Moet WIDGET word...
 
 
-// KRAGDAG GEBRUIKERS - HTML VIEW ?>
+// KRAGDAG REGISTRASIES VERSLAG - HTML VIEW ?>
 <?php include __SNIPPETS__.'/html.head.snippet.php'; ?>
 
 	<?=Ui::$local_styles_widget?>
@@ -93,12 +87,6 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 		.pager { margin-top: 5px; }
 		.popup-window label { width: 100%; }
 		.popup-window input { width: 100%; padding: 3px; font-size: 18px; }
-		.list td { max-width: 100px; }
-		.list thead tr { background-color: #005500; }
-		.verwyser_col { width: 180px; }
-		.vriend1_col { width: 150px; }
-		.vriend2_col, .vriend3_col { width: 70px; }
-		.epos2_col, .epos3_col { width: 100px; }
 	</style>
 
 	<header class="row">
@@ -107,7 +95,7 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 			<ul class="nav">
 				<li>
 					<form method="post">
-						<button class="btn btn-action" name="csv" type="submit" value="verwysings">
+						<button class="btn btn-action" name="csv" type="submit" value="registrasies">
 							<i class="doc-icon"></i><span>&nbsp; Laai af as CSV</span>
 						</button>
 					</form>
@@ -124,6 +112,22 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 	<?=Ui::$flash_widget?>
 
 	<section id="content">
+		<div class="row stats-row">
+			<div class="col1">
+				<ul class="framed padded min275">
+					<li>Alle Registrasies: <?=$opsomming->totaal?></li>
+					<li>Vooraf Registrasies: <?=$opsomming->vooraf?></li>
+					<li>Hek / Instap Registrasies: <?=$opsomming->hek?></li>
+				</ul>
+			</div>
+<!--
+			<div class="col1 right">
+				<ul class="framed padded min275">
+					<li>&nbsp;</li>
+				</ul>
+			</div>
+-->
+		</div>
 		<div class="row filters-row">
 			<form class="col1" id="filters-form" method="post">
 				<select class="min276" id="ekspo_id" name="ekspo"><?php
@@ -136,15 +140,36 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 				<div class="pager min200"><?=Ui::$pager_widget?></div>
 			</div>
 		</div>
-
-		<?=$listview_widget->render($verwysings, 'list w100', [
-      'ekspo_id',
-      'besoeker_id',
-      'besoekerSelfoon',
-      'besoekerTel',
-      'besoekerKryNuusbrief',
-      'besoekerUnsubscribed'])?>
-
+		<table class="list w100">
+			<thead>
+				<tr style="background-color:#005500">
+					<th class="hide-sm" style="width:44px">#</th>
+					<th style="width:80px"><?=Ui::$sort_widget->renderLink('Datum', 'registrasiedatum')?></th>
+					<th class="hide-sm" style="width:180px"><?=Ui::$sort_widget->renderLink('Besoeker', 'volleNaam')?></th>
+					<th class="hide-sm" style="width:100px"><?=Ui::$sort_widget->renderLink('Telefoon', 'telefoon')?></th>
+					<th style="width:100px"><?=Ui::$sort_widget->renderLink('Selfoon', 'selfoon')?></th>
+					<th><?=Ui::$sort_widget->renderLink('Epos', 'epos')?></th>
+<!--
+					<th class="actions" style="width:80px">Instruksies</th>
+-->
+				</tr>
+			</thead>
+			<tbody class="striped"><?php
+				echo PHP_EOL; foreach ($registrasies as $index => $item):?>
+				<tr>
+					<td class="hide-sm"><?=Ui::$pager_widget->offset+$index+1?>.</td>
+					<td title="<?=$item->registrasiedatum?>"><?=substr($item->registrasiedatum,0,11)?></td>
+					<td class="hide-sm nowrap max120" title="<?=$item->volleNaam?>"><?=$item->volleNaam?></td>
+					<td class="nowrap max50" title="<?=$item->telefoon?>"><?=$item->telefoon?></td>
+					<td class="nowrap max50" title="<?=$item->selfoon?>"><?=$item->selfoon?></td>
+					<td class="nowrap max150" title="<?=$item->epos?>"><?=$item->epos?:'-'?></td>
+<!--
+					<td>&nbsp;</td>
+-->
+				</tr><?php
+				echo PHP_EOL; endforeach; ?>
+			</tbody>
+		</table>
 		<div class="pager right">
 			<small>Items: <?=Ui::$pager_widget->offset+1?> tot <?=min(Ui::$pager_widget->offset+Ui::$pager_widget->itemspp, Ui::$pager_widget->itemscount)?> van <?=Ui::$pager_widget->itemscount?></small>
 		</div>

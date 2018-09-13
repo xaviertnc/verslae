@@ -1,4 +1,4 @@
-<?php // verslae/kragdag/geskiedenis/show.php - KRAGDAG GESKIEDENIS
+<?php // verslae/tuisskool/geskiedenis/show.php - KRAGDAG GESKIEDENIS
 
 include '../../app/bootstrap.php';
 
@@ -7,7 +7,7 @@ include __MODELS__  . '/geskiedenis.model.php';
 include __MODELS__  . '/csv-aflaai.domain.php';
 
 
-Ui::init(['base-url' => 'kragdag/geskiedenis/', 'itemspp' => 23]);
+Ui::init(['base-url' => 'tuisskool/geskiedenis/', 'itemspp' => 23]);
 
 
 $gebruiker = Auth::check('super');

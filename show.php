@@ -97,6 +97,7 @@ switch (Request::$method)
     // Kry al die opdagings vir die huidige ekspo...
 		$opdagings = OntvangsRepo::lysOpdagings($ekspo_id);
 		$registrasies = [];
+		$registrasies_hek = [];
 
     // Hardloop nou deur al die opdagings en genereer statistieke.
 		foreach ($opdagings as $opdaging)
@@ -216,7 +217,7 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 	</style>
 
 	<header class="row">
-		<h1 class="hc2" title="KragDag Verslae - Oorsig">KragDag Oorsig</h1>
+		<h1 class="hc2" title="Tuisskool Verslae - Oorsig">Tuisskool Oorsig</h1>
 		<div class="hc1 min270 right">
 			<ul class="nav">
 				<?=Ui::userinfo()?>
@@ -370,10 +371,10 @@ Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ek
 				</ul>
 				<br>
 				<ul class="sidemenu framed">
-					<li><a class="btn btn-primary" href="kragdag/gebruikers/">Gebruikers</a></li>
-					<li><a class="btn btn-primary" href="kragdag/geskiedenis/">Geskiedenis</a></li>
-					<li><a class="btn btn-primary" href="kragdag/verwysings/?ekspo=<?=$ekspo_id?>">Verwysings</a></li>
-					<li><a class="btn btn-primary" href="kragdag/daggrafiek/?ekspo=<?=$ekspo_id?>">Besoekers / Uur</a></li>
+					<li><a class="btn btn-primary" href="tuisskool/gebruikers/">Gebruikers</a></li>
+					<li><a class="btn btn-primary" href="tuisskool/geskiedenis/">Geskiedenis</a></li>
+					<li><a class="btn btn-primary" href="tuisskool/verwysings/?ekspo=<?=$ekspo_id?>">Verwysings</a></li>
+					<li><a class="btn btn-primary" href="tuisskool/daggrafiek/?ekspo=<?=$ekspo_id?>">Besoekers / Uur</a></li>
 				</ul>
 			</div>
 		</div>

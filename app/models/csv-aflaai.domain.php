@@ -98,8 +98,8 @@ Class CsvAflaaiDomain
 
 			switch ($tipe)
 			{
-				case 'borgverslag': $csv_file = self::makeCsvFile('BorgverslagModel', 'borgverslag_kragdag');   break;
-				case 'registrasies': $csv_file = self::makeCsvFile('RegistrasieModel' , 'kragdag_registrasies');   break;
+				case 'borgverslag': $csv_file = self::makeCsvFile('BorgverslagModel', 'borgverslag_tuisskool');   break;
+				case 'registrasies': $csv_file = self::makeCsvFile('RegistrasieModel' , 'tuisskool_registrasies');   break;
 				case 'geskiedenis' : $csv_file = self::makeCsvFile('GeskiedenisModel' , 'gebruiker_geskiedenis');  break;
 				case 'verwysings'  : $csv_file = self::makeCsvFile('VerwysingsModel'  , 'registrasie_verwysings'); break;
 				default: return; // Geen $tipe waarde... D.w.s nie 'n aflaai versoek nie!

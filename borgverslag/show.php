@@ -62,7 +62,7 @@ switch (Request::$method)
 
 		$geselekteerde_ekspo = EkspoModel::kiesEeen($ekspos, $ekspo_id);
 
-		$opskrif = $geselekteerde_ekspo ? $geselekteerde_ekspo->naam : 'KragDag Borg';
+		$opskrif = $geselekteerde_ekspo ? $geselekteerde_ekspo->naam : 'Tuisskool Borg';
 
 		Scripts::addLocalScripts('var ekspoSel=$("#ekspo_id"); ekspoSel.SumoSelect(); ekspoSel.change(function(){$("#filters-form").submit();return false;});'); // Moet WIDGET word...
 

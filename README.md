@@ -1,2 +1,2 @@
-# Verslae 0.4
-KragDag en Tuisskool Verslae Program
+# Verslae 0.5
+Tuisskool Verslae Program

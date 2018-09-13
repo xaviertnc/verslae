@@ -18,7 +18,7 @@ class Session extends \OneFile\Session
 {
     public function __construct()
     {
-        parent::__construct('kragdag', 'kdgvs');
+        parent::__construct('tuisskool', 'tsvs');
     }
 }
 

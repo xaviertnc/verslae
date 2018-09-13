@@ -27,7 +27,7 @@ class Logger extends \OneFile\Logger
 
 		parent::__construct(__LOGS__, $allowedTypes);
 
-		$this->setFilename('kragdag_' . $this->getDate() . '_' . substr(\Session::id(), 0, 5) . '.log');
+		$this->setFilename('tuisskool_' . $this->getDate() . '_' . substr(\Session::id(), 0, 5) . '.log');
 	}
 
 }
