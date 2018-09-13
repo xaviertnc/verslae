@@ -164,6 +164,7 @@ switch (Request::$method)
     
 		for ($ekspo_dag = 2; $ekspo_dag <= $ekspo_dae; $ekspo_dag++)
 		{
+      if (empty($registrasies[$ekspo_dag])) { break; }
       $dagRegistrasies = $registrasies[$ekspo_dag];
       foreach ($dagRegistrasies as $reg_id => $reg)
       {
