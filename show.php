@@ -58,23 +58,23 @@ switch (Request::$method)
 
 		$ekspo_id = Request::get('ekspo', __HUIDIGE_EKSPO_ID__);
     
-    // Kry die relevante ekspo om die ekspoinligting te kan vertoon.
+    	// Kry die relevante ekspo om die ekspoinligting te kan vertoon.
 		$ekspos = EksposRepo::kryEkspos();
 		$ekspo = EkspoModel::kiesEeen($ekspos, $ekspo_id);
 		$ekspo_dae = EkspoModel::kryAantalDae($ekspo);
     
-    // Sommeer opdaginggetalle vir volwasses en kinders per registrasie 
-    // oor AL die dae van die ekspo. Die totale sluit dus OPDAGINGS vir ELKE DAG in.
+    	// Sommeer opdaginggetalle vir volwasses en kinders per registrasie 
+    	// oor AL die dae van die ekspo. Die totale sluit dus OPDAGINGS vir ELKE DAG in.
 		$opgedaag = OntvangsRepo::kryOpgedaagOpsomming($ekspo_id);
     
-    // Uniek: Raporteer slegs die grootste volwasses- en kinders opdaagtellings 
-    // vir elke registrasie oor AL die dae van die ekspo. 
+    	// Uniek: Raporteer slegs die grootste volwasses- en kinders opdaagtellings 
+    	// vir elke registrasie oor AL die dae van die ekspo. 
 		$opgedaag_uniek = OntvangsRepo::kryOpgedaagUniekOpsomming($ekspo_id);
     
-    // Gebruik om 'vooraf_nie_opgedaag' te bereken.
+    	// Gebruik om 'vooraf_nie_opgedaag' te bereken.
 		$registrasietipes = RegistrasiesRepo::kryRegTipesOpsomming($ekspo_id);
     
-		$voorafregistrasies_opgedaag = $opgedaag_uniek->volwassenes - $registrasietipes->hek;
+		$voorafregistrasies_opgedaag = $opgedaag_uniek->registrasies - $registrasietipes->hek;
 		$vooraf_nie_opgedaag = $registrasietipes->vooraf - $voorafregistrasies_opgedaag;
 
 		$kinders_hek = [];
@@ -90,28 +90,28 @@ switch (Request::$method)
 		$registrasies_vooraf_totaal = 0;
 		$volwassenes_hek_totaal = 0;
 		$volwassenes_vooraf_totaal = 0;
-    $gratis_deurlaat_totaal = 0;
+    	$gratis_deurlaat_totaal = 0;
     
-    // $dups = [];
+    	// $dups = [];
 
-    // Kry al die opdagings vir die huidige ekspo...
+    	// Kry al die opdagings vir die huidige ekspo...
 		$opdagings = OntvangsRepo::lysOpdagings($ekspo_id);
 		$registrasies = [];
 		$registrasies_hek = [];
 
-    // Hardloop nou deur al die opdagings en genereer statistieke.
+    	// Hardloop nou deur al die opdagings en genereer statistieke.
 		foreach ($opdagings as $opdaging)
 		{
 			$ekspo_dag = $opdaging->dag;
 
 			$reg_id = $opdaging->registrasie_id;
       
-      // Hou 'n lys van al die registrasies per ekspodag.
-      // Skep 'n nuwe dag-groep indien dit nognie bestaan nie.
-      if (empty($registrasies[$ekspo_dag])) {
-        $registrasies[$ekspo_dag] = [];
+	    	// Hou 'n lys van al die registrasies per ekspodag.
+	    	// Skep 'n nuwe dag-groep indien dit nognie bestaan nie.
+	    	if (empty($registrasies[$ekspo_dag])) {
+        		$registrasies[$ekspo_dag] = [];
 				$kinders_hek[$ekspo_dag] = 0;
-        $kinders_hek_gratis[$ekspo_dag] = 0;
+        		$kinders_hek_gratis[$ekspo_dag] = 0;
 				$volwassenes_hek[$ekspo_dag] = 0;
 				$volwassenes_hek_gratis[$ekspo_dag] = 0;
 				$registrasies_hek[$ekspo_dag] = 0;
@@ -120,10 +120,10 @@ switch (Request::$method)
 				$registrasies_vooraf[$ekspo_dag] = 0;
 				$kinders_weer_opgedaag[$ekspo_dag] = 0;
 				$volwassenes_weer_opgedaag[$ekspo_dag] = 0;
-      }
+      		}
         
-      // Las 'n nuwe registrasieentiteit by die dag-groep indien dit nognie gelys is nie.
-      // Slegs EEN opdaging moet bestaan per registrasie per dag!
+      		// Las 'n nuwe registrasieentiteit by die dag-groep indien dit nognie gelys is nie.
+      		// Slegs EEN opdaging moet bestaan per registrasie per dag!
 			if (empty($registrasies[$ekspo_dag][$reg_id])) {
 				$reg = new stdClass();
 				$reg->kinders = $opdaging->kinders;
@@ -132,54 +132,52 @@ switch (Request::$method)
 			}
 			else
 			{
-        // Ignoreer hierdie duplikaat opdaging vir hierdie dag!  Hierdie opdaging moet nie bestaan nie!
-        // Moet sommer hier die oortollige opdaging uitvee!? ....
-        // $dups[] = $opdaging->id;
-        continue;
+		        // Ignoreer hierdie duplikaat opdaging vir hierdie dag!  Hierdie opdaging moet nie bestaan nie!
+		        // Moet sommer hier die oortollige opdaging uitvee!? ....
+		        // $dups[] = $opdaging->id;
+		        continue;
 			}
 
 			if ($opdaging->registrasietipe_id < 7) {
 				$kinders_vooraf[$ekspo_dag] += $opdaging->kinders;
 				$volwassenes_vooraf[$ekspo_dag] += $opdaging->volwassenes;
 				$registrasies_vooraf[$ekspo_dag]++;
-        $volwassenes_vooraf_totaal += $opdaging->volwassenes;;
-        $registrasies_vooraf_totaal++;
+		        $volwassenes_vooraf_totaal += $opdaging->volwassenes;;
+		        $registrasies_vooraf_totaal++;
 			}
 
 			if ($opdaging->registrasietipe_id >= 7) {
 				$kinders_hek[$ekspo_dag] += $opdaging->kinders;
 				$volwassenes_hek[$ekspo_dag] += $opdaging->volwassenes;
-        $volwassenes_hek_totaal += $opdaging->volwassenes;
+		        $volwassenes_hek_totaal += $opdaging->volwassenes;
 				$registrasies_hek[$ekspo_dag]++;
 			}
       
 			if (in_array($opdaging->registrasietipe_id, [7,10])) {
 				$kinders_hek_gratis[$ekspo_dag] += $opdaging->kinders;
 				$volwassenes_hek_gratis[$ekspo_dag] += $opdaging->volwassenes;
-        $gratis_deurlaat_totaal += $opdaging->volwassenes;
+        		$gratis_deurlaat_totaal += $opdaging->volwassenes;
 			}
       
 		}
 
-    // echo '<pre>DELETE FROM tblopgedaag WHERE id IN (' . implode(',', $dups) . ')</pre>';
+    	// echo '<pre>DELETE FROM tblopgedaag WHERE id IN (' . implode(',', $dups) . ')</pre>';
     
 		for ($ekspo_dag = 2; $ekspo_dag <= $ekspo_dae; $ekspo_dag++)
 		{
-      if (empty($registrasies[$ekspo_dag])) { break; }
-      $dagRegistrasies = $registrasies[$ekspo_dag];
-      foreach ($dagRegistrasies as $reg_id => $reg)
-      {
-        if (hetReedsOpgedaag($registrasies, $reg_id, $ekspo_dag))
-        {
-          $kinders_weer_opgedaag[$ekspo_dag] += $opdaging->kinders;      
-          $volwassenes_weer_opgedaag[$ekspo_dag] += $opdaging->volwassenes;
-        }
-      }
-    }
+	    	if (empty($registrasies[$ekspo_dag])) { break; }
+	    	$dagRegistrasies = $registrasies[$ekspo_dag];
+	    	foreach ($dagRegistrasies as $reg_id => $reg)
+	    	{
+	        	if (hetReedsOpgedaag($registrasies, $reg_id, $ekspo_dag))
+		        {
+		        	$kinders_weer_opgedaag[$ekspo_dag] += $opdaging->kinders;      
+		        	$volwassenes_weer_opgedaag[$ekspo_dag] += $opdaging->volwassenes;
+		        }
+	    	}
+    	}
     
-      
 		break;
-
 
 	default:
 		Errors::raise('Invalid Request');
