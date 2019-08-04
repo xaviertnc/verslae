@@ -84,6 +84,7 @@ switch (Request::$method)
 		$kinders_vooraf = [];
 		$volwassenes_vooraf = [];
 		$registrasies_vooraf = [];
+		$registrasies_hek = [];
 		$kinders_weer_opgedaag = [];
 		$volwassenes_weer_opgedaag = [];
 
