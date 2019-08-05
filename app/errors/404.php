@@ -62,7 +62,7 @@
             </p>
 
             <p>
-                Perhaps you would like to go to our <a href="<?php echo __WEBROOT__?>">home page</a>?
+                Perhaps you would like to go to our <a href="<?=__HOME_URL__?>">home page</a>?
             </p>
         </div>
     </div>

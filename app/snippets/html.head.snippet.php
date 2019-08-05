@@ -5,7 +5,7 @@ if (!Request::ajax()): ?>
 
 <head>
 	<title><?=__APP_TITLE__?></title>
-	<base href="<?=__WEBROOT__?>">
+	<base href="<?=__BASE_URL__?>/">
     <meta charset="UTF-8">
     <meta name="description" content="">
     <meta name="keywords" content="">

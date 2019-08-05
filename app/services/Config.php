@@ -23,15 +23,7 @@ class Config extends \OneFile\Config
 	 */
 	public function __construct()
 	{
-		parent::__construct(__CONFIG__ . '/global.php');
-
-		$env_config_file = __CONFIG__ . '/' . __ENV__ . '.php';
-
-		if (file_exists($env_config_file))
-		{
-			$env_config = include($env_config_file);
-			$this->merge($env_config);
-		}
+		parent::__construct(__CONFIG__ . '/app.php');
 	}
 
 }

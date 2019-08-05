@@ -88,8 +88,8 @@ class Auth
 
 		State::delAlert(); // Clear all Alerts!
 		Journal::log(1, 'Teken in op Verslae: ' . $username);
-		//Redirect::to($user->tuisskakel ? __WEBROOT__ . $user->tuisskakel : __WEBROOT__);
-		Redirect::to(__WEBROOT__);
+		//Redirect::to($user->tuisskakel ? __HOME_URL__ . $user->tuisskakel : __HOME_URL__);
+		Redirect::to(__HOME_URL__);
 	}
 
 

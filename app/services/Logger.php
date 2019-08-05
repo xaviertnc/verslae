@@ -23,7 +23,7 @@ class Logger extends \OneFile\Logger
 	{
 		//$allowedTypes = 'error|warning|test';
 
-		$allowedTypes = (__ENV__ == 'production' or ! __DEBUG__) ? 'error|warning' : null;
+		$allowedTypes = (__ENV_PROD__ or ! __DEBUG__) ? 'error|warning' : null;
 
 		parent::__construct(__LOGS__, $allowedTypes);
 

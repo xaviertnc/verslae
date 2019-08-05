@@ -31,7 +31,7 @@ class Errors
 
 		if (! __DEBUG__) die; //NB: Must be AFTER "Log" above!
 
-		if (__ENV__ == 'prod')
+		if (__ENV_PROD__)
 		{
 			if (ob_get_level()) ob_end_clean();
 

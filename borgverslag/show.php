@@ -48,15 +48,15 @@ switch (Request::$method)
 		$pageno = Request::get('p', 1);
 		$itemspp = Request::get('ipp', Ui::$itemspp);
 		$ekspo_id = Request::get('ekspo', __HUIDIGE_EKSPO_ID__);
-    
+
 		$opsomming = RegistrasiesRepo::kryRegistrasiesOpsomming($ekspo_id);
 
 		$totaal_borgverslag = $opsomming->reedsborglid + $opsomming->nie_lede_kontak;
-    
+
 		Ui::handle_popups(Request::get('dlg'), $keepParams);
 		Ui::$pager_widget->config(Ui::$base_url, $totaal_borgverslag, $itemspp, $pageno, $keepParams);
 		Ui::$sort_widget->config(Ui::$base_url, 'desc', $keepParams);
-        
+
 		$registrasies = RegistrasiesRepo::lysBorgRegistrasies($ekspo_id, Ui::$pager_widget->limit(), Ui::$sort_widget->orderby());
 		$ekspos = EksposRepo::kryEkspos();
 

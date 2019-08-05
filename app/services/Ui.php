@@ -144,11 +144,11 @@ Class Ui
 		$html = '&copy; KragDag ' . date('Y');
 		if ($user = Auth::getAuthUser() and $user->toegang == 'super')
 		{
-			$html .= ', env=' . __ENV__ . ', ver=' . __VER__ . ', db=' . Config::get('database.connections.mysql.DBNAME');
+			$html .= ', app-mode=' . __APP_MODE__ . ', ver=' . __VER__ . ', db=' . Config::get('database.connections.mysql.DBNAME');
 		}
 		else
 		{
-			$html .= ' (' . __ENV__ . ' v' . __VER__ . ')';
+			$html .= ' (' . __APP_MODE__ . ' v' . __VER__ . ')';
 		}
 
 		return $html;

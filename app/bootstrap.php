@@ -23,8 +23,8 @@ register_shutdown_function(function() {
 // DETECT ENVIRONMENT AND SETUP RELATED GLOBALS
 
 define('__APP__', __DIR__);
+include dirname(__APP__) . '/env-local.php';
 include __APP__. '/config/env.php';
-date_default_timezone_set(__TIMEZONE__);
 
 
 // LOAD VENDOR LIBS
